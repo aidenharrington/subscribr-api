@@ -9,23 +9,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.subscribr.exceptions.AccountNotFoundException;
-import com.project.subscribr.models.Account;
+import com.project.subscribr.models.Video;
 import com.project.subscribr.queries.AccountDB;
 
 @RestController
-@RequestMapping("/users/{id}")
+@RequestMapping("/users/")
 public class AccountController {
     
-    @PostMapping
-    public ResponseEntity<Account> subscribe(@PathVariable int accountId,
-     @RequestBody Account userAccount) {
+    @PostMapping("/{id}/subscribe/{subscriptionAccountId}")
+    public ResponseEntity<String> subscribe(@PathVariable int id, @PathVariable int subscriptionAccountId) {
         try {
-            AccountDB.subscribeToAccount(userAccount.getAccountId(), accountId);
-            return ResponseEntity.ok(userAccount);
+            AccountDB.subscribeToAccount(id, subscriptionAccountId);
+            return ResponseEntity.ok("Success");
         } catch (AccountNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Fail");
         } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
+        }
+    }
+
+
+    @PostMapping("{id}/post-video")
+    public ResponseEntity<String> postVideo(@PathVariable int id, @RequestBody Video video) {
+        try {
+            AccountDB.postVideo(id, video);
+            return ResponseEntity.ok("Success");
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
         }
     }
 }

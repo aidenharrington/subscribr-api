@@ -2,6 +2,7 @@ package com.project.subscribr.queries;
 
 import com.project.subscribr.exceptions.AccountNotFoundException;
 import com.project.subscribr.models.Account;
+import com.project.subscribr.models.Video;
 
 public class AccountDB {
     
@@ -16,6 +17,11 @@ public class AccountDB {
             throw new AccountNotFoundException();
         }
 
+    }
+
+    // Aiden - todo
+    public static void postVideo(int userId, Video video) {
+        // Todo
     }
 
     // Aiden - todo
