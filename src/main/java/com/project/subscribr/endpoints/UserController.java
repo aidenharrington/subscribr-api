@@ -3,6 +3,8 @@ package com.project.subscribr.endpoints;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
+import com.project.subscribr.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +20,22 @@ import com.project.subscribr.models.entities.Video;
 @RequestMapping("/users")
 public class UserController {
 
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable String id) {
         try {
-            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(id);
+            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
 
-            return ResponseEntity.ok(userFunctionsOrchestrator.getUser());
+            User user = userFunctionsOrchestrator.populateUser(id);
+
+            return ResponseEntity.ok(user);
         } catch (UserNotFoundException exception) {
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
          } catch (Exception exception) {
