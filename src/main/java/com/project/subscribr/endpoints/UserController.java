@@ -1,5 +1,6 @@
 package com.project.subscribr.endpoints;
 
+import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
@@ -43,18 +44,21 @@ public class UserController {
          }
     }
 
-    @PostMapping("/{id}/subscribe/{subscriptionUserId}")
-    public ResponseEntity<String> subscribe(@PathVariable String id, @PathVariable String subscriptionUserId) {
-        // try {
-        //     UserDB.subscribeToUser(id, subscriptionUserId);
-        //     return ResponseEntity.ok("Success");
-        // } catch (UserNotFoundException exception) {
-        //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Fail");
-        // } catch (Exception exception) {
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
-        // }
+    @PostMapping("/{id}/subscribe/{subscriptionToId}")
+    public ResponseEntity<String> subscribe(@PathVariable String id, @PathVariable String subscriptionToId) {
+         try {
+             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
+             userFunctionsOrchestrator.populateUser(id);
+             userFunctionsOrchestrator.subscribeToUser(subscriptionToId);
 
-        return ResponseEntity.ok("Success-00");
+             return ResponseEntity.ok("Subscription successful");
+         } catch (UserNotFoundException exception) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+         } catch (AlreadySubscribedException exception) {
+             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Already subscribed");
+         } catch (Exception exception) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
+         }
     }
 
 

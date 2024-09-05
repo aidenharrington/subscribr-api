@@ -1,5 +1,6 @@
 package com.project.subscribr.orchestrators;
 
+import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.services.UserService;
@@ -19,25 +20,12 @@ public class UserFunctionsOrchestrator {
         this.userService = userService;
     }
 
-    // Aiden - todo
-    public void subscribeToUser(Long subscriptionUserId) throws UserNotFoundException {
-        User subscribtionUser = userService.getUserById(subscriptionUserId);
-
-
-    }
-
-    // Aiden - todo
-//    public postVideo(int userId, Video video) {
-//        // Todo
-//    }
-
+    // User must be setup before operations can be run.
+    // Populates User object with DB values for user with {id}
     public User populateUser(String id) throws UserNotFoundException {
         try {
-            Long userId = Long.valueOf(id);
-            User user = userService.getUserById(userId);
+            this.user = getUser(id);
 
-            user.setId(userId);
-            this.user = user;
             return user;
         } catch (NumberFormatException exception) {
             // Any issues converting string id to long indicates incorrect id.
@@ -45,4 +33,29 @@ public class UserFunctionsOrchestrator {
             throw new UserNotFoundException();
         }
     }
+
+    // Aiden - todo
+    public void subscribeToUser(String id) throws UserNotFoundException, AlreadySubscribedException {
+        Long subscriptionToId = Long.valueOf(id);
+
+        boolean alreadySubscribedToUser = this.user.getSubscriptions().stream().anyMatch(subscribedToUser ->
+                subscribedToUser.getId().equals(subscriptionToId));
+
+        if (!alreadySubscribedToUser) {
+            userService.subscribeToUser(this.user.getId(), subscriptionToId);
+        } else {
+            throw new AlreadySubscribedException();
+        }
+    }
+
+    private User getUser(String id) throws UserNotFoundException {
+        Long userId = Long.valueOf(id);
+
+        return userService.getUserById(userId);
+    }
+
+    // Aiden - todo
+//    public postVideo(int userId, Video video) {
+//        // Todo
+//    }
 }
