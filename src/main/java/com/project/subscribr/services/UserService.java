@@ -30,6 +30,10 @@ public class UserService {
         subscriptionRepository.save(subscription);
     }
 
+    public void createUser(User user) {
+        userRepository.save(user);
+    }
+
 
 
 }

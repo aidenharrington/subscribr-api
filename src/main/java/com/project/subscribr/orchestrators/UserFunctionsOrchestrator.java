@@ -16,7 +16,7 @@ public class UserFunctionsOrchestrator {
     private User user;
 
     @Autowired
-    public UserFunctionsOrchestrator(UserService userService) throws UserNotFoundException {
+    public UserFunctionsOrchestrator(UserService userService) {
         this.userService = userService;
     }
 

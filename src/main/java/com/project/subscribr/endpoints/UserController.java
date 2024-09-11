@@ -3,17 +3,14 @@ package com.project.subscribr.endpoints;
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
+import com.project.subscribr.models.requestBodies.UserRequestBody;
+import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.subscribr.models.entities.Video;
 
@@ -28,7 +25,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable String id) {
         try {
@@ -42,6 +38,18 @@ public class UserController {
          } catch (Exception exception) {
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
          }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody UserRequestBody newUser) {
+        try {
+            NewUserOrchestrator newUserOrchestrator = new NewUserOrchestrator(userService);
+
+            User user = newUserOrchestrator.createUser(newUser);
+            return ResponseEntity.ok(user);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/{id}/subscribe/{subscriptionToId}")
