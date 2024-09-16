@@ -4,6 +4,7 @@ import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.requestBodies.UserRequestBody;
+import com.project.subscribr.models.requestBodies.VideoRequestBody;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.services.UserService;
@@ -70,13 +71,16 @@ public class UserController {
     }
 
 
-//    @PostMapping("{id}/post-video")
-//    public ResponseEntity<String> postVideo(@PathVariable int id, @RequestBody Video video) {
-//        try {
-//            UserFunctionsOrchestrator.postVideo(id, video);
-//            return ResponseEntity.ok("Success");
-//        } catch (Exception exception) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
-//        }
-//    }
+    @PostMapping("{id}/post-video")
+    public ResponseEntity<String> postVideo(@PathVariable String id, @RequestBody VideoRequestBody newVideo) {
+        try {
+            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
+            userFunctionsOrchestrator.populateUser(id);
+            userFunctionsOrchestrator.postVideo(newVideo);
+
+            return ResponseEntity.ok("Success");
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
+        }
+    }
 }
