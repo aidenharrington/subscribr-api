@@ -1,7 +1,6 @@
 package com.project.subscribr.orchestrators;
 
 import com.project.subscribr.models.entities.User;
-import com.project.subscribr.models.requestBodies.UserRequestBody;
 import com.project.subscribr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,17 +14,8 @@ public class NewUserOrchestrator {
         this.userService = userService;
     }
 
-    public User createUser(UserRequestBody newUser) {
-        User user = mapUserRequestBodyToUser(newUser);
-
+    public User createUser(User user) {
         userService.createUser(user);
-
-        return user;
-    }
-
-    private User mapUserRequestBodyToUser(UserRequestBody newUser) {
-        User user = new User();
-        user.setUsername(newUser.getUsername());
 
         return user;
     }

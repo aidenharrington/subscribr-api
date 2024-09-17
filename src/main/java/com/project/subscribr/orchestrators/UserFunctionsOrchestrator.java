@@ -4,7 +4,6 @@ import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
-import com.project.subscribr.models.requestBodies.VideoRequestBody;
 import com.project.subscribr.services.UserService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +51,8 @@ public class UserFunctionsOrchestrator {
         }
     }
 
-    public void postVideo(VideoRequestBody newVideo) {
-        Video video = mapVideoRequestBodyToVideo(newVideo);
+    public void postVideo(Video newVideo) {
+        Video video = populateVideo(newVideo);
 
         userService.postVideo(video);
     }
@@ -64,11 +63,8 @@ public class UserFunctionsOrchestrator {
         return userService.getUserById(userId);
     }
 
-    private Video mapVideoRequestBodyToVideo(VideoRequestBody newVideo) {
-        Video video = new Video();
-
-        video.setName(newVideo.getName());
-        video.setRelease_date(Timestamp.from(Instant.now()));
+    private Video populateVideo(Video video) {
+        video.setReleaseDate(Timestamp.from(Instant.now()));
 
         return video;
     }

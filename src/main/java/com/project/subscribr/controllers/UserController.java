@@ -1,10 +1,9 @@
-package com.project.subscribr.endpoints;
+package com.project.subscribr.controllers;
 
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
-import com.project.subscribr.models.requestBodies.UserRequestBody;
-import com.project.subscribr.models.requestBodies.VideoRequestBody;
+import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.services.UserService;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.project.subscribr.models.entities.Video;
 
 @RestController
 @RequestMapping("/users")
@@ -26,12 +23,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable String userId) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
 
-            User user = userFunctionsOrchestrator.populateUser(id);
+            User user = userFunctionsOrchestrator.populateUser(userId);
 
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException exception) {
@@ -42,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody UserRequestBody newUser) {
+    public ResponseEntity<User> createUser(@RequestBody User newUser) {
         try {
             NewUserOrchestrator newUserOrchestrator = new NewUserOrchestrator(userService);
 
@@ -53,11 +50,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{id}/subscribe/{subscriptionToId}")
-    public ResponseEntity<String> subscribe(@PathVariable String id, @PathVariable String subscriptionToId) {
+    @PostMapping("/{userId}/subscribe/{subscriptionToId}")
+    public ResponseEntity<String> subscribe(@PathVariable String userId, @PathVariable String subscriptionToId) {
          try {
              UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-             userFunctionsOrchestrator.populateUser(id);
+             userFunctionsOrchestrator.populateUser(userId);
              userFunctionsOrchestrator.subscribeToUser(subscriptionToId);
 
              return ResponseEntity.ok("Subscription successful");
@@ -71,11 +68,11 @@ public class UserController {
     }
 
 
-    @PostMapping("{id}/post-video")
-    public ResponseEntity<String> postVideo(@PathVariable String id, @RequestBody VideoRequestBody newVideo) {
+    @PostMapping("{userId}/post-video")
+    public ResponseEntity<String> postVideo(@PathVariable String userId, @RequestBody Video newVideo) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-            userFunctionsOrchestrator.populateUser(id);
+            userFunctionsOrchestrator.populateUser(userId);
             userFunctionsOrchestrator.postVideo(newVideo);
 
             return ResponseEntity.ok("Success");
