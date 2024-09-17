@@ -30,36 +30,40 @@ public class VideoUploadedWebhookOrchestrator {
 
     public void sendWebhookUpdates() {
         // Get current emitterMap
-        Map<Long, SseEmitter> emitterMap = this.emitterManger.getEmitterMap();
+        Map<Long, List<SseEmitter>> emitterMap = this.emitterManger.getEmitterMap();
 
         updateVideoUploader(emitterMap);
         updateSubscribers(emitterMap);
     }
 
-    private void updateVideoUploader(Map<Long, SseEmitter> emitterMap) {
-        SseEmitter videoUploaderEmitter = emitterMap.get(userId);
+    private void updateVideoUploader(Map<Long, List<SseEmitter>> emitterMap) {
+        List<SseEmitter> emitters = emitterMap.get(userId);
         String eventName = "video-upload-complete";
-
-        sendUpdateToEmitter(videoUploaderEmitter, eventName, this.video);
+        sendUpdateToEmitters(userId, emitters, eventName, this.video);
     }
 
-    private void updateSubscribers(Map<Long, SseEmitter> emitterMap) {
+    private void updateSubscribers(Map<Long, List<SseEmitter>> emitterMap) {
         List<Long> subscriberIds = this.userService.getSubscribersToUser(this.userId);;
         String eventName = "new-video-uploaded";
 
         for (Long subscriberId : subscriberIds) {
-            SseEmitter emitter = emitterMap.get(userId);
-            sendUpdateToEmitter(emitter, eventName, this.video);
+            List<SseEmitter> emitters = emitterMap.get(subscriberId);
+            sendUpdateToEmitters(subscriberId, emitters, eventName, this.video);
         }
-
     }
 
-    private void sendUpdateToEmitter(SseEmitter emitter, String eventName, Object data) {
-        try {
-            emitter.send(SseEmitter.event().name(eventName).data(data));
-        } catch (IOException e) {
-            // Remove dead emitter
-            EmitterManger.getInstance().removeEmitter(userId);
+    private void sendUpdateToEmitters(Long userId, List<SseEmitter> emitters, String eventName, Object data) {
+       List<SseEmitter> deadEmitters = new ArrayList<>();
+
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event().name(eventName).data(data));
+            } catch (IOException e) {
+                // Remove dead emitter
+                deadEmitters.add(emitter);
+            }
         }
+
+        this.emitterManger.removeEmitters(userId, deadEmitters);
     }
 }

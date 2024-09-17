@@ -26,7 +26,7 @@ public class UserFunctionsOrchestrator {
 
     // User must be setup before operations can be run.
     // Populates User object with DB values for user with {id}
-    public User populateUser(String id) throws UserNotFoundException {
+    public User populateUser(Long id) throws UserNotFoundException {
         try {
             this.user = getUser(id);
 
@@ -38,9 +38,7 @@ public class UserFunctionsOrchestrator {
         }
     }
 
-    public void subscribeToUser(String id) throws UserNotFoundException, AlreadySubscribedException {
-        Long subscriptionToId = Long.valueOf(id);
-
+    public void subscribeToUser(Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
         boolean alreadySubscribedToUser = this.user.getSubscriptions().stream().anyMatch(subscribedToUser ->
                 subscribedToUser.getId().equals(subscriptionToId));
 
@@ -57,8 +55,7 @@ public class UserFunctionsOrchestrator {
         userService.postVideo(video);
     }
 
-    private User getUser(String id) throws UserNotFoundException {
-        Long userId = Long.valueOf(id);
+    private User getUser(Long userId) throws UserNotFoundException {
 
         return userService.getUserById(userId);
     }

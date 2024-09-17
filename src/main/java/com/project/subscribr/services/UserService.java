@@ -51,9 +51,7 @@ public class UserService {
     }
 
     public List<Long> getSubscribersToUser(Long userId) {
-        // Todo
-
-        return null;
+        return subscriptionRepository.findBySubscribedToId(userId);
     }
 
 

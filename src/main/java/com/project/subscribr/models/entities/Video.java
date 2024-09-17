@@ -1,6 +1,5 @@
 package com.project.subscribr.models.entities;
 
-import com.project.subscribr.models.enums.VideoUploadStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,8 +21,5 @@ public class Video {
 
     @Column(name = "release_date")
     private Timestamp releaseDate;
-
-    @Column(name = "video_upload_status")
-    private VideoUploadStatus videoUploadStatus;
     
 }

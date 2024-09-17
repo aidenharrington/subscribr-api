@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable String userId) {
+    public ResponseEntity<User> getUser(@PathVariable Long userId) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
 
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/subscribe/{subscriptionToId}")
-    public ResponseEntity<String> subscribe(@PathVariable String userId, @PathVariable String subscriptionToId) {
+    public ResponseEntity<String> subscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
          try {
              UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
              userFunctionsOrchestrator.populateUser(userId);
@@ -69,13 +69,13 @@ public class UserController {
 
 
     @PostMapping("{userId}/post-video")
-    public ResponseEntity<String> postVideo(@PathVariable String userId, @RequestBody Video newVideo) {
+    public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody Video newVideo) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
             userFunctionsOrchestrator.populateUser(userId);
             userFunctionsOrchestrator.postVideo(newVideo);
 
-            return ResponseEntity.ok("Success");
+            return ResponseEntity.ok("Success - video upload started");
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
         }

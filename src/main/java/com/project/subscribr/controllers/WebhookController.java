@@ -29,8 +29,6 @@ public class WebhookController {
 
             return "Successfully received webhook and sent alerts";
         } catch (Exception exception) {
-            // Todo - set video upload status to error & update DB
-
             return "Successfully received webhook with internal error";
         }
 
