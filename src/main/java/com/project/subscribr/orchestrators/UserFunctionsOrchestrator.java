@@ -8,6 +8,7 @@ import com.project.subscribr.services.UserService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -15,6 +16,11 @@ import java.time.Instant;
 @Component
 public class UserFunctionsOrchestrator {
     private final UserService userService;
+
+    private final String SUBSCRIBR_VIDEO_UPLOADER_URL = "//localhost:9000/";
+
+    // Subscribr URL: /{userId}/videos/{videoId}
+    private final String UPLOAD_VIDEO_URL = "/videos/upload";
 
     @Getter
     private User user;
@@ -64,5 +70,12 @@ public class UserFunctionsOrchestrator {
         video.setReleaseDate(Timestamp.from(Instant.now()));
 
         return video;
+    }
+
+    private void uploadVideo(Video video) {
+        String url = SUBSCRIBR_VIDEO_UPLOADER_URL + UPLOAD_VIDEO_URL;
+
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(url, String.class);
     }
 }

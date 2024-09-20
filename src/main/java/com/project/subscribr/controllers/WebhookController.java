@@ -22,9 +22,9 @@ public class WebhookController {
     @PostMapping("/{userId}/videos/{videoId}")
     public String videoUploadComplete(@PathVariable Long userId, @PathVariable Long videoId) {
         try {
-            VideoUploadedWebhookOrchestrator webhookOrchestrator = new VideoUploadedWebhookOrchestrator(userService,
-                    userId, videoId);
+            VideoUploadedWebhookOrchestrator webhookOrchestrator = new VideoUploadedWebhookOrchestrator(userService);
 
+            webhookOrchestrator.populateVideo(userId, videoId);
             webhookOrchestrator.sendWebhookUpdates();
 
             return "Successfully received webhook and sent alerts";

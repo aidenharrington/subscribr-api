@@ -16,16 +16,19 @@ import java.util.Map;
 @Component
 public class VideoUploadedWebhookOrchestrator {
     private final UserService userService;
-    private final Long userId;
-    private final Video video;
+    private Long userId;
+    private Video video;
     private final EmitterManger emitterManger;
 
     @Autowired
-    public VideoUploadedWebhookOrchestrator(UserService userService, Long userId, Long videoId) throws VideoNotFoundException {
+    public VideoUploadedWebhookOrchestrator(UserService userService) {
         this.userService = userService;
+        this.emitterManger = EmitterManger.getInstance();
+    }
+
+    public void populateVideo(Long userId, Long videoId) throws VideoNotFoundException {
         this.userId = userId;
         this.video = this.userService.getVideoById(videoId);
-        this.emitterManger = EmitterManger.getInstance();
     }
 
     public void sendWebhookUpdates() {
