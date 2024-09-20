@@ -21,5 +21,9 @@ public class Video {
 
     @Column(name = "release_date")
     private Timestamp releaseDate;
+
+    @Column(name = "uploader_user_id")
+    private Long uploaderUserId;
+
     
 }
