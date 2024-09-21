@@ -56,7 +56,11 @@ public class VideoUploadedWebhookOrchestrator {
     }
 
     private void sendUpdateToEmitters(Long userId, List<SseEmitter> emitters, String eventName, Object data) {
-       List<SseEmitter> deadEmitters = new ArrayList<>();
+       if (emitters == null || emitters.isEmpty()) {
+           return;
+       }
+
+        List<SseEmitter> deadEmitters = new ArrayList<>();
 
         for (SseEmitter emitter : emitters) {
             try {

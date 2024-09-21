@@ -16,14 +16,14 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "release_date")
     private Timestamp releaseDate;
 
-    @Column(name = "video_uploader_id")
-    private Long videoUploadId;
+    @Column(name = "video_uploader_id", nullable = false)
+    private Long videoUploaderId;
 
     
 }

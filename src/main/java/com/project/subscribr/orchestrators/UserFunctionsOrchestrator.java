@@ -5,7 +5,6 @@ import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.services.UserService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -17,34 +16,26 @@ import java.time.Instant;
 public class UserFunctionsOrchestrator {
     private final UserService userService;
 
-    private final String SUBSCRIBR_VIDEO_UPLOADER_URL = "//localhost:9000/";
+    private final String SUBSCRIBR_VIDEO_UPLOADER_URL = "http://localhost:9000";
 
     // Subscribr URL: /{userId}/videos/{videoId}
     private final String UPLOAD_VIDEO_URL = "/videos/upload";
 
-    @Getter
     private User user;
+
+    private Video video;
 
     @Autowired
     public UserFunctionsOrchestrator(UserService userService) {
         this.userService = userService;
     }
 
-    // User must be setup before operations can be run.
-    // Populates User object with DB values for user with {id}
-    public User populateUser(Long id) throws UserNotFoundException {
-        try {
-            this.user = getUser(id);
-
-            return user;
-        } catch (NumberFormatException exception) {
-            // Any issues converting string id to long indicates incorrect id.
-            // For the client, this is the same as no user found by id.
-            throw new UserNotFoundException();
+    public void subscribeToUser(Long userId, Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
+        if (this.user == null) {
+            getUserFromDb(userId);
         }
-    }
 
-    public void subscribeToUser(Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
+
         boolean alreadySubscribedToUser = this.user.getSubscriptions().stream().anyMatch(subscribedToUser ->
                 subscribedToUser.getId().equals(subscriptionToId));
 
@@ -55,19 +46,33 @@ public class UserFunctionsOrchestrator {
         }
     }
 
-    public void postVideo(Video newVideo) {
-        Video video = populateVideo(newVideo);
+    public User getUser(Long userId) throws UserNotFoundException {
+        if (this.user == null) {
+           this.user = getUserFromDb(userId);
+        }
 
-        userService.postVideo(video);
+        return this.user;
     }
 
-    private User getUser(Long userId) throws UserNotFoundException {
-
+    private User getUserFromDb(Long userId) throws UserNotFoundException {
         return userService.getUserById(userId);
     }
 
-    private Video populateVideo(Video video) {
+
+
+    public void postVideo(Long videoUploaderId, Video video) {
+        if (this.video == null) {
+            this.video = populateVideo(videoUploaderId, video);
+        }
+
+
+        userService.postVideo(video);
+        uploadVideo(video);
+    }
+
+    public Video populateVideo(Long uploaderUserId, Video video) {
         video.setReleaseDate(Timestamp.from(Instant.now()));
+        video.setVideoUploaderId(uploaderUserId);
 
         return video;
     }
@@ -76,6 +81,7 @@ public class UserFunctionsOrchestrator {
         String url = SUBSCRIBR_VIDEO_UPLOADER_URL + UPLOAD_VIDEO_URL;
 
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(url, String.class);
+//        String result = restTemplate.getForObject(url, String.class);
+        String result = restTemplate.postForObject(url, video, String.class);
     }
 }

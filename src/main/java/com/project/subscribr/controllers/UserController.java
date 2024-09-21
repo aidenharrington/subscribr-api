@@ -28,7 +28,7 @@ public class UserController {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
 
-            User user = userFunctionsOrchestrator.populateUser(userId);
+            User user = userFunctionsOrchestrator.getUser(userId);
 
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException exception) {
@@ -54,8 +54,7 @@ public class UserController {
     public ResponseEntity<String> subscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
          try {
              UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-             userFunctionsOrchestrator.populateUser(userId);
-             userFunctionsOrchestrator.subscribeToUser(subscriptionToId);
+             userFunctionsOrchestrator.subscribeToUser(userId, subscriptionToId);
 
              return ResponseEntity.ok("Subscription successful");
          } catch (UserNotFoundException exception) {
@@ -72,8 +71,7 @@ public class UserController {
     public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody Video newVideo) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-            userFunctionsOrchestrator.populateUser(userId);
-            userFunctionsOrchestrator.postVideo(newVideo);
+            userFunctionsOrchestrator.postVideo(userId, newVideo);
 
             return ResponseEntity.ok("Success - video upload started");
         } catch (Exception exception) {
