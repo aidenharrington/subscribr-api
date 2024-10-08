@@ -24,9 +24,10 @@ public class WebhookController {
         try {
             VideoUploadedWebhookOrchestrator webhookOrchestrator = new VideoUploadedWebhookOrchestrator(userService);
 
+            System.out.println("Received webhook for video upload.");
+
             webhookOrchestrator.populateVideo(userId, videoId);
             webhookOrchestrator.sendWebhookUpdates();
-            System.out.println("Sent webhooks to emitters.");
 
             return "Successfully received webhook and sent alerts";
         } catch (Exception exception) {

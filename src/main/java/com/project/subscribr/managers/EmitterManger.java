@@ -1,6 +1,5 @@
 package com.project.subscribr.managers;
 
-import com.project.subscribr.exceptions.UserInstanceAlreadyExists;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.*;
@@ -29,7 +28,9 @@ public class EmitterManger {
         emitterMap.computeIfAbsent(userId, k -> new ArrayList<>()).add(emitter);
     }
 
-    public void removeEmitter(Long userId, SseEmitter emitter) {
+    public void removeEmitter(Long userId, SseEmitter emitter, String cause) {
+        System.out.println("Removing emitter: " + cause);
+
         List<SseEmitter> emitters = emitterMap.get(userId);
 
         if (emitters != null) {

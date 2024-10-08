@@ -26,8 +26,8 @@ public class EmitterController {
         this.emitterManger.addEmitter(userId, emitter);
         System.out.println("New emitter added");
 
-        emitter.onCompletion(() -> this.emitterManger.removeEmitter(userId, emitter));
-        emitter.onTimeout(() -> this.emitterManger.removeEmitter(userId, emitter));
+        emitter.onCompletion(() -> this.emitterManger.removeEmitter(userId, emitter, "Complete"));
+        emitter.onTimeout(() -> this.emitterManger.removeEmitter(userId, emitter, "Timeout"));
 
         return emitter;
     }
