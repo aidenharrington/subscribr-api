@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Component
 public class UserFunctionsOrchestrator {
@@ -52,6 +53,10 @@ public class UserFunctionsOrchestrator {
         }
 
         return this.user;
+    }
+
+    public List<User> getUsers() {
+        return userService.getUsers();
     }
 
     private User getUserFromDb(Long userId) throws UserNotFoundException {

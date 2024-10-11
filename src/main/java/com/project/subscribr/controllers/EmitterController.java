@@ -21,7 +21,8 @@ public class EmitterController {
 
     @GetMapping("/subscribe/{userId}")
     public SseEmitter subscribeToVideoNotifications(@PathVariable Long userId) {
-        SseEmitter emitter = new SseEmitter();
+        // Create emitter with no timeout. Timeouts are handled by frontend
+        SseEmitter emitter = new SseEmitter(-1L);
 
         this.emitterManger.addEmitter(userId, emitter);
         System.out.println("New emitter added");

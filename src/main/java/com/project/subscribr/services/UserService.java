@@ -28,6 +28,10 @@ public class UserService {
         this.videoRepository = videoRepository;
     }
 
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
     public User getUserById(Long userId) throws UserNotFoundException {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
