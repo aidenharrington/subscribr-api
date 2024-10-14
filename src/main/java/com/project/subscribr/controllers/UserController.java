@@ -1,6 +1,7 @@
 package com.project.subscribr.controllers;
 
 import com.project.subscribr.exceptions.AlreadySubscribedException;
+import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
@@ -80,6 +81,22 @@ public class UserController {
          } catch (Exception exception) {
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
          }
+    }
+
+    @PostMapping("/{userId}/unsubscribe/{subscriptionToId}")
+    public ResponseEntity<String> unsubscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
+        try {
+            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
+            userFunctionsOrchestrator.unsubscribeToUser(userId, subscriptionToId);
+
+            return ResponseEntity.ok("Subscription successful");
+        } catch (UserNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        } catch (SubscriptionNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Subscription not found.");
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
+        }
     }
 
 

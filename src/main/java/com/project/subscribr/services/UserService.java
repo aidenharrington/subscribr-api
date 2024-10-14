@@ -1,5 +1,6 @@
 package com.project.subscribr.services;
 
+import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.exceptions.VideoNotFoundException;
 import com.project.subscribr.models.entities.Subscription;
@@ -40,6 +41,13 @@ public class UserService {
         Subscription subscription = new Subscription(userId, subscriptionToId);
 
         subscriptionRepository.save(subscription);
+    }
+
+    public void unsubscribeToUser(Long userId, Long subscriptionToId) throws SubscriptionNotFoundException {
+        Long subscriptionId = subscriptionRepository.findByIds(userId, subscriptionToId)
+                .orElseThrow(SubscriptionNotFoundException::new);
+
+        subscriptionRepository.deleteById(subscriptionId);
     }
 
     public void createUser(User user) {

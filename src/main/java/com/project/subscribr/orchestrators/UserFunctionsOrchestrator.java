@@ -1,6 +1,7 @@
 package com.project.subscribr.orchestrators;
 
 import com.project.subscribr.exceptions.AlreadySubscribedException;
+import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
@@ -33,7 +34,7 @@ public class UserFunctionsOrchestrator {
 
     public void subscribeToUser(Long userId, Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
         if (this.user == null) {
-            getUserFromDb(userId);
+            this.user = getUserFromDb(userId);
         }
 
 
@@ -45,6 +46,14 @@ public class UserFunctionsOrchestrator {
         } else {
             throw new AlreadySubscribedException();
         }
+    }
+
+    public void unsubscribeToUser(Long userId, Long subscriptionToId) throws SubscriptionNotFoundException, UserNotFoundException {
+        if (this.user == null) {
+            this.user = getUserFromDb(userId);
+        }
+
+        userService.unsubscribeToUser(userId, subscriptionToId);
     }
 
     public User getUser(Long userId) throws UserNotFoundException {
