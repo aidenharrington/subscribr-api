@@ -1,6 +1,7 @@
 package com.project.subscribr.services;
 
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
+import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.exceptions.VideoNotFoundException;
 import com.project.subscribr.models.entities.Subscription;
@@ -10,6 +11,7 @@ import com.project.subscribr.models.repositories.SubscriptionRepository;
 import com.project.subscribr.models.repositories.UserRepository;
 import com.project.subscribr.models.repositories.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,20 +40,27 @@ public class UserService {
     }
 
     public void subscribeToUser(Long userId, Long subscriptionToId) {
-        Subscription subscription = new Subscription(userId, subscriptionToId);
+        Subscription subscription = new Subscription();
+        subscription.setSubscriberId(userId);
+        subscription.setSubscribedToId(subscriptionToId);
 
         subscriptionRepository.save(subscription);
     }
 
     public void unsubscribeToUser(Long userId, Long subscriptionToId) throws SubscriptionNotFoundException {
-        Long subscriptionId = subscriptionRepository.findByIds(userId, subscriptionToId)
+        Long subscriptionId = subscriptionRepository.findById(userId, subscriptionToId)
                 .orElseThrow(SubscriptionNotFoundException::new);
 
         subscriptionRepository.deleteById(subscriptionId);
     }
 
-    public void createUser(User user) {
-        userRepository.save(user);
+    public void createUser(User user) throws UsernameAlreadyExistsException {
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UsernameAlreadyExistsException();
+        }
+
     }
 
     public void postVideo(Video video) {

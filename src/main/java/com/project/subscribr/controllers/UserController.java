@@ -2,6 +2,7 @@ package com.project.subscribr.controllers;
 
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
+import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
@@ -62,6 +63,8 @@ public class UserController {
 
             User user = newUserOrchestrator.createUser(newUser);
             return ResponseEntity.ok(user);
+        } catch (UsernameAlreadyExistsException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -89,7 +92,7 @@ public class UserController {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
             userFunctionsOrchestrator.unsubscribeToUser(userId, subscriptionToId);
 
-            return ResponseEntity.ok("Subscription successful");
+            return ResponseEntity.ok("Unsubscription successful");
         } catch (UserNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         } catch (SubscriptionNotFoundException exception) {

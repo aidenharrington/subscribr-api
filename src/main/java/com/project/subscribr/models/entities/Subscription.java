@@ -19,9 +19,4 @@ public class Subscription {
 
     @Column(name = "subscribed_to_id")
     private Long subscribedToId;
-
-    public Subscription(Long subscriberId, Long subscribedToId) {
-        this.subscriberId = subscriberId;
-        this.subscribedToId = subscribedToId;
-    }
 }

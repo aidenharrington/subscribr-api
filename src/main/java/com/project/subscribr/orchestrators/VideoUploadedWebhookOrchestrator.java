@@ -48,7 +48,7 @@ public class VideoUploadedWebhookOrchestrator {
 
     private void updateSubscribers(Map<Long, List<SseEmitter>> emitterMap) {
         List<Long> subscriberIds = this.userService.getSubscribersToUser(this.userId);;
-        String eventName = "new-video-uploaded";
+        String eventName = "new-subscribed-video-uploaded";
 
         for (Long subscriberId : subscriberIds) {
             List<SseEmitter> emitters = emitterMap.get(subscriberId);

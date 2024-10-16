@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    @Query("SELECT s.subscriberId FROM Subscription s WHERE s.subscriberId = :subscriberId AND s.subscribedToId = :subscribedToId")
-    Optional<Long> findByIds(Long userId, Long subscribedToId);
+    @Query("SELECT s.id FROM Subscription s WHERE s.subscriberId = :subscriberId AND s.subscribedToId = :subscribedToId")
+    Optional<Long> findById(Long subscriberId, Long subscribedToId);
 
     @Query("SELECT s.subscriberId FROM Subscription s WHERE s.subscribedToId = :subscribedToId")
     List<Long> findBySubscribedToId(Long subscribedToId);
