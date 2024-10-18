@@ -3,6 +3,7 @@ package com.project.subscribr.orchestrators;
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
+import com.project.subscribr.models.DTOs.VideoDTO;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.services.UserService;
@@ -74,9 +75,9 @@ public class UserFunctionsOrchestrator {
 
 
 
-    public void postVideo(Long videoUploaderId, Video video) {
+    public void postVideo(VideoDTO videoDTO) throws UserNotFoundException {
         if (this.video == null) {
-            this.video = populateVideo(videoUploaderId, video);
+            this.video = populateVideo(videoDTO);
         }
 
 
@@ -84,9 +85,14 @@ public class UserFunctionsOrchestrator {
         uploadVideo(video);
     }
 
-    public Video populateVideo(Long uploaderUserId, Video video) {
+    public Video populateVideo(VideoDTO videoDTO) throws UserNotFoundException {
+        String uploaderUsername = userService.getUserById(videoDTO.getVideoUploaderId()).getUsername();
+        Video video = new Video();
+
+        video.setName(videoDTO.getName());
+        video.setVideoUploaderId(videoDTO.getVideoUploaderId());
+        video.setUploaderUsername(uploaderUsername);
         video.setReleaseDate(Timestamp.from(Instant.now()));
-        video.setVideoUploaderId(uploaderUserId);
 
         return video;
     }
@@ -95,7 +101,6 @@ public class UserFunctionsOrchestrator {
         String url = SUBSCRIBR_VIDEO_UPLOADER_URL + UPLOAD_VIDEO_URL;
 
         RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(url, String.class);
-        String result = restTemplate.postForObject(url, video, String.class);
+        restTemplate.postForObject(url, video, String.class);
     }
 }

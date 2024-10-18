@@ -68,7 +68,17 @@ public class UserService {
     }
 
     public Video getVideoById(Long videoId) throws VideoNotFoundException {
-        return videoRepository.findById(videoId).orElseThrow(VideoNotFoundException::new);
+        Video video = videoRepository.findById(videoId).orElseThrow(VideoNotFoundException::new);
+        String uploaderUsername = null;
+
+        try {
+            uploaderUsername = getUserById(video.getVideoUploaderId()).getUsername();
+        } catch (UserNotFoundException e) {
+            // Ignored, username is defaulted to null
+        }
+
+        video.setUploaderUsername(uploaderUsername);
+        return video;
     }
 
     public List<Long> getSubscribersToUser(Long userId) {

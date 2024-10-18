@@ -4,6 +4,7 @@ import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.exceptions.UserNotFoundException;
+import com.project.subscribr.models.DTOs.VideoDTO;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
@@ -104,12 +105,14 @@ public class UserController {
 
 
     @PostMapping("{userId}/post-video")
-    public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody Video newVideo) {
+    public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody VideoDTO videoDTO) {
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-            userFunctionsOrchestrator.postVideo(userId, newVideo);
+            userFunctionsOrchestrator.postVideo(videoDTO);
 
             return ResponseEntity.ok("Success - video upload started");
+        } catch (UserNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
         }
