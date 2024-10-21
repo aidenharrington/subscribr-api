@@ -2,8 +2,11 @@ package com.project.subscribr.orchestrators;
 
 import com.project.subscribr.exceptions.VideoNotFoundException;
 import com.project.subscribr.managers.EmitterManger;
+import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
+import com.project.subscribr.services.SubscriptionService;
 import com.project.subscribr.services.UserService;
+import com.project.subscribr.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -12,23 +15,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class VideoUploadedWebhookOrchestrator {
-    private final UserService userService;
+    private final SubscriptionService subscriptionService;
+    private final VideoService videoService;
     private Long userId;
     private Video video;
     private final EmitterManger emitterManger;
 
     @Autowired
-    public VideoUploadedWebhookOrchestrator(UserService userService) {
-        this.userService = userService;
+    public VideoUploadedWebhookOrchestrator(SubscriptionService subscriptionService, VideoService videoService) {
+
+        this.subscriptionService = subscriptionService;
+        this.videoService = videoService;
         this.emitterManger = EmitterManger.getInstance();
     }
 
     public void populateVideo(Long userId, Long videoId) throws VideoNotFoundException {
         this.userId = userId;
-        this.video = this.userService.getVideoById(videoId);
+        this.video = this.videoService.getVideoById(videoId);
     }
 
     public void sendWebhookUpdates() {
@@ -47,7 +54,9 @@ public class VideoUploadedWebhookOrchestrator {
     }
 
     private void updateSubscribers(Map<Long, List<SseEmitter>> emitterMap) {
-        List<Long> subscriberIds = this.userService.getSubscribersToUser(this.userId);;
+        List<Long> subscriberIds = this.subscriptionService.getSubscribersToUser(this.userId).stream()
+                .map(User::getId)
+                .toList();
         String eventName = "new-subscribed-video-uploaded";
 
         for (Long subscriberId : subscriberIds) {

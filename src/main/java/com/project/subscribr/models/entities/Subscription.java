@@ -14,9 +14,11 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "subscriber_id")
-    private Long subscriberId;
+    @ManyToOne
+    @JoinColumn(name = "subscriber_id")
+    private User subscriber;
 
-    @Column(name = "subscribed_to_id")
-    private Long subscribedToId;
+    @ManyToOne
+    @JoinColumn(name = "subscribed_to_id")
+    private User subscribedTo;
 }

@@ -2,11 +2,10 @@ package com.project.subscribr.controllers;
 
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
-import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.exceptions.UserNotFoundException;
+import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.models.DTOs.VideoDTO;
 import com.project.subscribr.models.entities.User;
-import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.services.UserService;
@@ -68,53 +67,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @PostMapping("/{userId}/subscribe/{subscriptionToId}")
-    public ResponseEntity<String> subscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
-         try {
-             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-             userFunctionsOrchestrator.subscribeToUser(userId, subscriptionToId);
-
-             return ResponseEntity.ok("Subscription successful");
-         } catch (UserNotFoundException exception) {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-         } catch (AlreadySubscribedException exception) {
-             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Already subscribed");
-         } catch (Exception exception) {
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
-         }
-    }
-
-    @PostMapping("/{userId}/unsubscribe/{subscriptionToId}")
-    public ResponseEntity<String> unsubscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
-        try {
-            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-            userFunctionsOrchestrator.unsubscribeToUser(userId, subscriptionToId);
-
-            return ResponseEntity.ok("Unsubscription successful");
-        } catch (UserNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        } catch (SubscriptionNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Subscription not found.");
-        } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
-        }
-    }
-
-
-    @PostMapping("{userId}/post-video")
-    public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody VideoDTO videoDTO) {
-        try {
-            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
-            userFunctionsOrchestrator.postVideo(videoDTO);
-
-            return ResponseEntity.ok("Success - video upload started");
-        } catch (UserNotFoundException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
         }
     }
 }

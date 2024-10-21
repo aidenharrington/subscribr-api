@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
-
 @Entity
 @Table(name = "users")
 @Getter
@@ -19,12 +17,14 @@ public class User {
     @Column
     private String username;
 
-    @ManyToMany
-    @JoinTable(
-            name = "subscriptions",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscribed_to_id")
-    )
-    private Set<User> subscriptions;
+    // Todo: remove
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "subscriptions",
+//            joinColumns = @JoinColumn(name = "subscriber_id"),
+//            inverseJoinColumns = @JoinColumn(name = "subscribed_to_id")
+//    )
+//    private Set<User> subscriptions;
 
 }
