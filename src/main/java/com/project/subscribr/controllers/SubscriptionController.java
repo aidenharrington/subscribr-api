@@ -3,14 +3,16 @@ package com.project.subscribr.controllers;
 import com.project.subscribr.exceptions.AlreadySubscribedException;
 import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
+import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.SubscriptionOrchestrator;
-import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.services.SubscriptionService;
 import com.project.subscribr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -27,11 +29,28 @@ public class SubscriptionController {
         this.userService = userService;
     }
 
-    @PostMapping("/{userId}/subscribe/{subscriptionToId}")
-    public ResponseEntity<String> subscribe(@PathVariable Long userId, @PathVariable Long subscriptionToId) {
+    @GetMapping("/{subscriberId}")
+    public ResponseEntity<List<User>> getSubscriptions(@PathVariable Long subscriberId) {
         try {
-            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService, userService);
-            subscriptionOrchestrator.subscribeToUser(userId, subscriptionToId);
+            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService,
+                    userService);
+
+            List<User> subscriptions = subscriptionOrchestrator.getUserSubscriptions(subscriberId);
+
+            return ResponseEntity.ok(subscriptions);
+        } catch (UserNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/{subscriberId}/subscribe/{subscriptionToId}")
+    public ResponseEntity<String> subscribe(@PathVariable Long subscriberId, @PathVariable Long subscriptionToId) {
+        try {
+            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService,
+                    userService);
+            subscriptionOrchestrator.subscribeToUser(subscriberId, subscriptionToId);
 
             return ResponseEntity.ok("Subscription successful");
         } catch (UserNotFoundException exception) {

@@ -5,7 +5,6 @@ import com.project.subscribr.managers.EmitterManger;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.models.entities.Video;
 import com.project.subscribr.services.SubscriptionService;
-import com.project.subscribr.services.UserService;
 import com.project.subscribr.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class VideoUploadedWebhookOrchestrator {

@@ -1,10 +1,7 @@
 package com.project.subscribr.controllers;
 
-import com.project.subscribr.exceptions.AlreadySubscribedException;
-import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
-import com.project.subscribr.models.DTOs.VideoDTO;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;

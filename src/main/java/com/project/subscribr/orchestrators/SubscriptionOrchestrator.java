@@ -25,9 +25,14 @@ public class SubscriptionOrchestrator {
         this.userService = userService;
     }
 
-    public void subscribeToUser(Long userId, Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
-        populateUser(userId);
-        populateSubscriptions(userId);
+    public List<User> getUserSubscriptions(Long subscriberId) throws UserNotFoundException {
+        setupOrchestrator(subscriberId);
+
+        return this.subscriptions;
+    }
+
+    public void subscribeToUser(Long subscriberId, Long subscriptionToId) throws UserNotFoundException, AlreadySubscribedException {
+        setupOrchestrator(subscriberId);
 
 
         boolean alreadySubscribedToUser = this.subscriptions.stream().anyMatch(subscribedToUser ->
@@ -41,23 +46,26 @@ public class SubscriptionOrchestrator {
         }
     }
 
-    public void unsubscribeToUser(Long userId, Long subscriptionToId) throws SubscriptionNotFoundException {
-        subscriptionService.unsubscribeToUser(this.user.getId(), subscriptionToId);
+    public void unsubscribeToUser(Long subscriberId, Long subscriptionToId) throws SubscriptionNotFoundException, UserNotFoundException {
+        setupOrchestrator(subscriberId);
+
+        subscriptionService.unsubscribeToUser(subscriberId, subscriptionToId);
     }
 
-    private void populateUser(Long userId) throws UserNotFoundException {
+    private void setupOrchestrator(Long subscriberId) throws UserNotFoundException {
+        populateUser(subscriberId);
+        populateSubscriptions(subscriberId);
+    }
+
+    private void populateUser(Long subscriberId) throws UserNotFoundException {
         if (this.user == null) {
-            this.user = userService.getUserById(userId);
-        }
-
-        if (this.subscriptions == null) {
-            this.subscriptions = subscriptionService.getSubscribersToUser(this.user.getId());
+            this.user = userService.getUserById(subscriberId);
         }
     }
 
-    private void populateSubscriptions(Long userId) throws UserNotFoundException {
+    private void populateSubscriptions(Long subscriberId) throws UserNotFoundException {
         if (this.subscriptions == null) {
-            this.subscriptions = subscriptionService.getSubscribersToUser(userId);
+            this.subscriptions = subscriptionService.getUserSubscriptions(subscriberId);
         }
     }
 

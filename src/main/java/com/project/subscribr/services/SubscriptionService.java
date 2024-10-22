@@ -27,13 +27,17 @@ public class SubscriptionService {
     }
 
     public void unsubscribeToUser(Long userId, Long subscriptionToId) throws SubscriptionNotFoundException {
-        Long subscriptionId = subscriptionRepository.findById(userId, subscriptionToId)
+        Long subscriptionId = subscriptionRepository.findSubscriberIdBySubscription(userId, subscriptionToId)
                 .orElseThrow(SubscriptionNotFoundException::new);
 
         subscriptionRepository.deleteById(subscriptionId);
     }
 
-    public List<User> getSubscribersToUser(Long userId) {
-        return subscriptionRepository.findBySubscribedToUser(userId);
+    public List<User> getSubscribersToUser(Long subscribedToId) {
+        return subscriptionRepository.findSubscribersBySubscribedToId(subscribedToId);
+    }
+
+    public List<User> getUserSubscriptions(Long subscriberId) {
+        return subscriptionRepository.findSubscribedUsersBySubscriberId(subscriberId);
     }
 }

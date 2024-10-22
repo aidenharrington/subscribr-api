@@ -2,7 +2,6 @@ package com.project.subscribr.controllers;
 
 import com.project.subscribr.orchestrators.VideoUploadedWebhookOrchestrator;
 import com.project.subscribr.services.SubscriptionService;
-import com.project.subscribr.services.UserService;
 import com.project.subscribr.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

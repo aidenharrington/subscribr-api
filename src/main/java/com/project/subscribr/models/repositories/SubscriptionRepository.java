@@ -11,11 +11,14 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    @Query("SELECT s.id FROM Subscription s WHERE s.subscriberId = :subscriberId AND s.subscribedToId = :subscribedToId")
-    Optional<Long> findById(Long subscriberId, Long subscribedToId);
+    @Query("SELECT s.id FROM Subscription s WHERE s.subscriber.id = :subscriberId AND s.subscribedTo.id = :subscribedToId")
+    Optional<Long> findSubscriberIdBySubscription(Long subscriberId, Long subscribedToId);
 
-    @Query("SELECT s FROM Subscription s WHERE s.subscribedToId = :subscribedToId")
-    List<User> findBySubscribedToUser(Long subscribedToId);
+    @Query("SELECT s.subscriber FROM Subscription s WHERE s.subscribedTo.id = :subscribedToId")
+    List<User> findSubscribersBySubscribedToId(Long subscribedToId);
+
+    @Query("SELECT s.subscribedTo FROM Subscription s WHERE s.subscriber.id = :subscriberId")
+    List<User> findSubscribedUsersBySubscriberId(Long subscriberId);
 
     @NonNull
     void deleteById(@NonNull Long subscriptionId);

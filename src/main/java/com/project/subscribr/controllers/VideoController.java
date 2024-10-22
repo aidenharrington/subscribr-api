@@ -2,14 +2,12 @@ package com.project.subscribr.controllers;
 
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.DTOs.VideoDTO;
-import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
 import com.project.subscribr.orchestrators.VideoOrchestrator;
 import com.project.subscribr.services.UserService;
 import com.project.subscribr.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
