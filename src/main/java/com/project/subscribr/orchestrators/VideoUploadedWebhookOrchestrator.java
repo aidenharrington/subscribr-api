@@ -39,7 +39,6 @@ public class VideoUploadedWebhookOrchestrator {
     public void sendWebhookUpdates() {
         // Get current emitterMap
         Map<Long, List<SseEmitter>> emitterMap = this.emitterManger.getEmitterMap();
-        System.out.println("Emitter map: " + emitterMap);
 
         updateVideoUploader(emitterMap);
         updateSubscribers(emitterMap);
@@ -65,7 +64,6 @@ public class VideoUploadedWebhookOrchestrator {
 
     private void sendUpdateToEmitters(Long userId, List<SseEmitter> emitters, String eventName, Object data) {
        if (emitters == null || emitters.isEmpty()) {
-           System.out.println("No emitters found for userId: " + userId + "Emitter map: " + this.emitterManger.getEmitterMap());
            return;
        }
 
@@ -77,8 +75,8 @@ public class VideoUploadedWebhookOrchestrator {
                 System.out.println("Sent notification to emitter: " + data);
             } catch (IOException e) {
                 // Remove dead emitter
+                System.out.println("Unable to send data to emitter, adding to dead emitters.");
                 deadEmitters.add(emitter);
-                System.out.println("Removing dead emitter.");
             }
         }
 

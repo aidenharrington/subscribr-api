@@ -26,14 +26,18 @@ public class VideoController {
 
     @PostMapping("{userId}/post-video")
     public ResponseEntity<String> postVideo(@PathVariable Long userId, @RequestBody VideoDTO videoDTO) {
+        System.out.println("Posting video, upload started: " + videoDTO.getName() + " for user: " + userId);
         try {
             VideoOrchestrator videoOrchestrator = new VideoOrchestrator(userService, videoService);
             videoOrchestrator.postVideo(videoDTO);
 
+            System.out.println("Video upload successfully started: " + videoDTO.getName());
             return ResponseEntity.ok("Success - video upload started");
         } catch (UserNotFoundException exception) {
+            System.out.println("Error: user not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail");
         }
     }

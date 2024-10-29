@@ -2,6 +2,7 @@ package com.project.subscribr.managers;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.*;
 
 // Singleton class
@@ -29,7 +30,7 @@ public class EmitterManger {
     }
 
     public void removeEmitter(Long userId, SseEmitter emitter, String cause) {
-        System.out.println("Removing emitter: " + cause);
+        System.out.println("Removing emitter for user: " + userId + " for reason: " + cause);
 
         List<SseEmitter> emitters = emitterMap.get(userId);
 
@@ -43,8 +44,14 @@ public class EmitterManger {
     }
 
     public void removeEmitters(Long userId, List<SseEmitter> emittersToRemove) {
-        List<SseEmitter> emitters = this.emitterMap.get(userId);
-        emitters.removeAll(emittersToRemove);
+        System.out.println("Removing dead emitters for user: " + userId);
+        try {
+            List<SseEmitter> emitters = this.emitterMap.get(userId);
+            emitters.removeAll(emittersToRemove);
+        } catch (Exception e) {
+            System.out.println("Error removing emitters for user: " + userId);
+        }
+
     }
 
     public Map<Long, List<SseEmitter>> getEmitterMap() {

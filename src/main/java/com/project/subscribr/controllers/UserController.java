@@ -40,29 +40,37 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
+        System.out.println("Retrieving user: " + userId);
         try {
             UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
 
             User user = userFunctionsOrchestrator.getUser(userId);
 
+            System.out.println("Successfully retrieved user: " + user.getId());
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException exception) {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            System.out.println("Error: user not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
          } catch (Exception exception) {
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            System.out.println("Error: " + exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
          }
     }
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
+        System.out.println("Creating new user: " + newUser);
         try {
             NewUserOrchestrator newUserOrchestrator = new NewUserOrchestrator(userService);
 
             User user = newUserOrchestrator.createUser(newUser);
+            System.out.println("Successfully created new user: " + user.getId());
             return ResponseEntity.ok(user);
         } catch (UsernameAlreadyExistsException exception) {
+            System.out.println("Error: username already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (Exception exception) {
+            System.out.println("Error: " + exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
