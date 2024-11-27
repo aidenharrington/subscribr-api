@@ -17,14 +17,4 @@ public class User {
     @Column
     private String username;
 
-    // Todo: remove
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "subscriptions",
-//            joinColumns = @JoinColumn(name = "subscriber_id"),
-//            inverseJoinColumns = @JoinColumn(name = "subscribed_to_id")
-//    )
-//    private Set<User> subscriptions;
-
 }

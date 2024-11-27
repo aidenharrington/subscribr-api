@@ -5,8 +5,8 @@ import com.project.subscribr.exceptions.UsernameAlreadyExistsException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.NewUserOrchestrator;
 import com.project.subscribr.orchestrators.UserFunctionsOrchestrator;
-import com.project.subscribr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +18,13 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    ApplicationContext applicationContext;
 
     @GetMapping
     public ResponseEntity<List<User>> getUsers() {
         try {
-            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
+            UserFunctionsOrchestrator userFunctionsOrchestrator = applicationContext.getBean(UserFunctionsOrchestrator.class);
 
             List<User> users = userFunctionsOrchestrator.getUsers();
 
@@ -42,7 +38,7 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable Long userId) {
         System.out.println("Retrieving user: " + userId);
         try {
-            UserFunctionsOrchestrator userFunctionsOrchestrator = new UserFunctionsOrchestrator(userService);
+            UserFunctionsOrchestrator userFunctionsOrchestrator = applicationContext.getBean(UserFunctionsOrchestrator.class);
 
             User user = userFunctionsOrchestrator.getUser(userId);
 
@@ -61,7 +57,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         System.out.println("Creating new user: " + newUser);
         try {
-            NewUserOrchestrator newUserOrchestrator = new NewUserOrchestrator(userService);
+            NewUserOrchestrator newUserOrchestrator = applicationContext.getBean(NewUserOrchestrator.class);
 
             User user = newUserOrchestrator.createUser(newUser);
             System.out.println("Successfully created new user: " + user.getId());

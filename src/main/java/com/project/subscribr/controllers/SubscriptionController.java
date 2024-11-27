@@ -5,9 +5,8 @@ import com.project.subscribr.exceptions.SubscriptionNotFoundException;
 import com.project.subscribr.exceptions.UserNotFoundException;
 import com.project.subscribr.models.entities.User;
 import com.project.subscribr.orchestrators.SubscriptionOrchestrator;
-import com.project.subscribr.services.SubscriptionService;
-import com.project.subscribr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,22 +18,14 @@ import java.util.List;
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
-    private final SubscriptionService subscriptionService;
-    private final UserService userService;
-
     @Autowired
-    public SubscriptionController(SubscriptionService subscriptionService,
-                                                         UserService userService) {
-        this.subscriptionService = subscriptionService;
-        this.userService = userService;
-    }
+    ApplicationContext applicationContext;
 
     @GetMapping("/{subscriberId}")
     public ResponseEntity<List<User>> getSubscriptions(@PathVariable Long subscriberId) {
         System.out.println("Getting subscriptions for user: " + subscriberId);
         try {
-            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService,
-                    userService);
+            SubscriptionOrchestrator subscriptionOrchestrator = applicationContext.getBean(SubscriptionOrchestrator.class);
 
             List<User> subscriptions = subscriptionOrchestrator.getUserSubscriptions(subscriberId);
 
@@ -53,8 +44,8 @@ public class SubscriptionController {
     public ResponseEntity<String> subscribe(@PathVariable Long subscriberId, @PathVariable Long subscriptionToId) {
         System.out.println("Subscribing user: " + subscriberId + " to user: " + subscriptionToId);
         try {
-            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService,
-                    userService);
+            SubscriptionOrchestrator subscriptionOrchestrator = applicationContext.getBean(SubscriptionOrchestrator.class);
+
             subscriptionOrchestrator.subscribeToUser(subscriberId, subscriptionToId);
 
             System.out.println("Successfully subscribed user: " + subscriberId + " to user: " + subscriptionToId);
@@ -75,7 +66,8 @@ public class SubscriptionController {
     public ResponseEntity<String> unsubscribe(@PathVariable Long subscriberId, @PathVariable Long subscriptionToId) {
         System.out.println("Unsubscribing user: " + subscriberId + " from user: " + subscriptionToId);
         try {
-            SubscriptionOrchestrator subscriptionOrchestrator = new SubscriptionOrchestrator(subscriptionService, userService);
+            SubscriptionOrchestrator subscriptionOrchestrator = applicationContext.getBean(SubscriptionOrchestrator.class);
+
             subscriptionOrchestrator.unsubscribeToUser(subscriberId, subscriptionToId);
 
             System.out.println("Successfully unsubscribed user: " + subscriberId + " from user: " + subscriptionToId);

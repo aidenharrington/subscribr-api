@@ -2,7 +2,6 @@ package com.project.subscribr.managers;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.*;
 
 // Singleton class

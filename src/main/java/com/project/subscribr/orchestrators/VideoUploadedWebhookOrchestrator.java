@@ -19,8 +19,6 @@ import java.util.Map;
 public class VideoUploadedWebhookOrchestrator {
     private final SubscriptionService subscriptionService;
     private final VideoService videoService;
-    private Long userId;
-    private Video video;
     private final EmitterManger emitterManger;
 
     @Autowired
@@ -31,34 +29,33 @@ public class VideoUploadedWebhookOrchestrator {
         this.emitterManger = EmitterManger.getInstance();
     }
 
-    public void populateVideo(Long userId, Long videoId) throws VideoNotFoundException {
-        this.userId = userId;
-        this.video = this.videoService.getVideoById(videoId);
+    public Video populateVideo(Long videoId) throws VideoNotFoundException {
+        return this.videoService.getVideoById(videoId);
     }
 
-    public void sendWebhookUpdates() {
+    public void sendWebhookUpdates(Long userId, Video video) {
         // Get current emitterMap
         Map<Long, List<SseEmitter>> emitterMap = this.emitterManger.getEmitterMap();
 
-        updateVideoUploader(emitterMap);
-        updateSubscribers(emitterMap);
+        updateVideoUploader(emitterMap, userId, video);
+        updateSubscribers(emitterMap, userId, video);
     }
 
-    private void updateVideoUploader(Map<Long, List<SseEmitter>> emitterMap) {
+    private void updateVideoUploader(Map<Long, List<SseEmitter>> emitterMap, Long userId, Video video) {
         List<SseEmitter> emitters = emitterMap.get(userId);
         String eventName = "video-upload-complete";
-        sendUpdateToEmitters(userId, emitters, eventName, this.video);
+        sendUpdateToEmitters(userId, emitters, eventName, video);
     }
 
-    private void updateSubscribers(Map<Long, List<SseEmitter>> emitterMap) {
-        List<Long> subscriberIds = this.subscriptionService.getSubscribersToUser(this.userId).stream()
+    private void updateSubscribers(Map<Long, List<SseEmitter>> emitterMap, Long userId, Video video) {
+        List<Long> subscriberIds = this.subscriptionService.getSubscribersToUser(userId).stream()
                 .map(User::getId)
                 .toList();
         String eventName = "new-subscribed-video-uploaded";
 
         for (Long subscriberId : subscriberIds) {
             List<SseEmitter> emitters = emitterMap.get(subscriberId);
-            sendUpdateToEmitters(subscriberId, emitters, eventName, this.video);
+            sendUpdateToEmitters(subscriberId, emitters, eventName, video);
         }
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
 @Component
 public class UserFunctionsOrchestrator {
     private final UserService userService;
-    private User user;
 
     @Autowired
     public UserFunctionsOrchestrator(UserService userService) {
@@ -19,11 +18,7 @@ public class UserFunctionsOrchestrator {
     }
 
     public User getUser(Long userId) throws UserNotFoundException {
-        if (this.user == null) {
-           this.user = userService.getUserById(userId);
-        }
-
-        return this.user;
+        return userService.getUserById(userId);
     }
 
     public List<User> getUsers() {
